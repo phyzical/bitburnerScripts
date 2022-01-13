@@ -1,4 +1,4 @@
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     let ram = null
     while (1) {
@@ -9,7 +9,7 @@ export async function main(ns) {
     }
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function buyServers(ns, ram) {
     let servers = ns.getPurchasedServers()
     let lowestRam = servers.reduce((acc, host) => {
@@ -62,7 +62,7 @@ async function buyServers(ns, ram) {
     return lowestRam
 }
 
-// /** @param {import("index").NS } ns */
+// /** @param {import("globals").NS } ns */
 // async function buyPrograms(ns) {
 // 	const programs = {
 // 		BruteSSH: 0,

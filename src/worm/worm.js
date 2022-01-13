@@ -2,7 +2,7 @@ import {
     getServers
 } from "util/helpers.js"
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     let {
         servers,

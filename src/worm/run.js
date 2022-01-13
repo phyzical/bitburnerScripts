@@ -1,4 +1,4 @@
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     while (1) {
         let hackingLvl = ns.getHackingLevel() > 50 ? ns.getHackingLevel() : 25

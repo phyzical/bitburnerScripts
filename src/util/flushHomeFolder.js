@@ -1,10 +1,8 @@
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
-    var arr = ls(getHostname(), "script");
+    var arr = ns.ls(ns.getHostname());
+    arr = arr.filter(x => !x.includes(".exe"))
     for (var i in arr) {
-        if (rm(arr[i]))
-            tprint("successfully deleted " + arr[i]);
-        else
-            tprint("failed to delete " + arr[i]);
+        ns.rm(arr[i])
     }
 }

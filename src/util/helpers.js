@@ -1,4 +1,4 @@
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function getServers(ns, ignoreHackingRequirement = false) {
     var servers = ns.scan("home")
     let length = 0
@@ -31,12 +31,12 @@ export async function getServers(ns, ignoreHackingRequirement = false) {
     }
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function log(ns, filename, content) {
     await ns.write(filename, content + '\n')
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function getEquipment(ns) {
     return ns.gang.getEquipmentNames().reduce((acc, item) => {
         let type = ns.gang.getEquipmentType(item)

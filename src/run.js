@@ -1,4 +1,4 @@
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     // let homeRam = ns.getServerMaxRam("home")
     ns.exec("upgrades/purchaseTech.js", "home");

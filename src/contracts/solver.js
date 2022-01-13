@@ -2,7 +2,7 @@ import {
     sliceIntoChunks,
     uniqify
 } from 'util/helpers.js'
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     // ns.clear("/solve-log.txt")
     let contracts = ns.ls("home", "contract-").filter(x => x != "-log").map(contract => {
@@ -90,7 +90,7 @@ export async function main(ns) {
     }
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveSanitizeParenthesesInExpression(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let inputs = contract.data.split("")
@@ -187,7 +187,7 @@ function removeInvalidExpressions(inputs, index, removals = 0, sum = []) {
     return sum
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveMinimumPathSumInATriangle(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let inputs = contract.data
@@ -221,7 +221,7 @@ function doNextPyramidJump(array) {
 }
 
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveSpiralizeMatrix(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let grid = contract.data
@@ -263,7 +263,7 @@ async function solveSpiralizeMatrix(ns, contract) {
     await solve(ns, answer, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveFindAllValidMathExpressions(ns, contract) {
     let i, j;
 
@@ -318,7 +318,7 @@ async function solveFindAllValidMathExpressions(ns, contract) {
 
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveUniquePathsInAGridI(ns, contract) {
     // await ns.write("solve-log.txt",contract.description + "\n")
     let y = contract.data[0]
@@ -354,7 +354,7 @@ function addUniquePaths(grid, x = 0, y = 0) {
     return paths
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveUniquePathsInAGridII(ns, contract) {
     // await ns.write("solve-log.txt",contract.description + "\n")
     let grid = contract.data
@@ -380,7 +380,7 @@ function addUniquePathsWithBlocks(grid, x = 0, y = 0) {
     return paths
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveSubarrayWithMaximumSum(ns, contract) {
     let inputs = contract.data
     let answer = -999999999
@@ -398,7 +398,7 @@ async function solveSubarrayWithMaximumSum(ns, contract) {
     await solve(ns, answer, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveTotalWaysToSum(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let answer = countCombinations(contract.data, 1) - 1
@@ -456,7 +456,7 @@ function doTrade(stockPrices, maxTrades) {
     return highestProfit[maxTrades - 1][stockPrices.length - 1];
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveAlgorithmicStockTraderI(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let prices = contract.data
@@ -465,7 +465,7 @@ async function solveAlgorithmicStockTraderI(ns, contract) {
     await solve(ns, highestProfit, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveAlgorithmicStockTraderII(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let prices = contract.data
@@ -476,7 +476,7 @@ async function solveAlgorithmicStockTraderII(ns, contract) {
 }
 
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveAlgorithmicStockTraderIII(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let prices = contract.data
@@ -485,7 +485,7 @@ async function solveAlgorithmicStockTraderIII(ns, contract) {
     await solve(ns, highestProfit, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveAlgorithmicStockTraderIV(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let prices = contract.data[1]
@@ -497,7 +497,7 @@ async function solveAlgorithmicStockTraderIV(ns, contract) {
 
 
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveMergeOverlappingIntervals(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let inputs = contract.data
@@ -561,7 +561,7 @@ async function solveMergeOverlappingIntervals(ns, contract) {
     await solve(ns, answer, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveGenerateIPAddresses(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let length = contract.data.length
@@ -598,7 +598,7 @@ async function solveGenerateIPAddresses(ns, contract) {
     await solve(ns, ips, contract)
 }
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveArrayJumpingGame(ns, contract) {
     // await ns.write("solve-log.txt", contract.description + "\n")
     let jumps = contract.data
@@ -619,7 +619,7 @@ function doNextJump(jumps, index, result = 0) {
 }
 
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solveFindLargestPrimeFactor(ns, contract) {
     const factors = [];
     let divisor = 2;
@@ -638,7 +638,7 @@ async function solveFindLargestPrimeFactor(ns, contract) {
 }
 
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 async function solve(ns, answer, contract) {
     let reward = ns.codingcontract.attempt(answer, contract.name, contract.target, {
         returnReward: true

@@ -4,7 +4,7 @@ import {
     getRandomString,
 } from 'util/helpers.js'
 
-/** @param {import("index").NS } ns */
+/** @param {import("globals").NS } ns */
 export async function main(ns) {
     if (!ns.gang.inGang()) {
         ns.gang.createGang("Slum Snakes")

@@ -1,6 +1,6 @@
 import {
     getServers
-} from "helpers.js"
+} from "util/helpers.js"
 
 /** @param {import("index").NS } ns */
 export async function main(ns) {
@@ -29,7 +29,7 @@ export async function main(ns) {
             let threads = remainingThreads > maxHackThreads ? maxHackThreads : remainingThreads
             if (threads > 0 && target.hasAdminRights) {
                 await ns.write("worm-log.txt", `executing hacker on ${target.hostname}, threads: ${threads} \n`)
-                ns.exec("worm/hacker.js", server.hostname, threads, target.hostname, target.moneyMax, target.minDifficulty);
+                ns.exec("worm/hack.js", server.hostname, threads, target.hostname, target.moneyMax, target.minDifficulty);
                 await ns.sleep(1)
             }
             remainingThreads = remainingThreads - threads

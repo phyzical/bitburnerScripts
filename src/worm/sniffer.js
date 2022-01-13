@@ -1,6 +1,6 @@
 import {
     getServers
-} from "helpers.js"
+} from "util/helpers.js"
 
 /** @param {import("index").NS } ns */
 export async function main(ns) {
@@ -10,14 +10,14 @@ export async function main(ns) {
 
     for (var target of servers) {
         await openServers(ns, target)
-        await copyfiles(ns, target)
+        await copyFiles(ns, target)
     }
 
 }
 
 
 /** @param {import("index").NS } ns */
-async function copyfiles(ns, target) {
+async function copyFiles(ns, target) {
     let files = ns.ls(target.hostname, ".txt")
         .concat(ns.ls(target.hostname, ".lit"))
     if (files.length) {
@@ -28,7 +28,7 @@ async function copyfiles(ns, target) {
 /** @param {import("index").NS } ns */
 async function openServers(ns, target) {
     if (ns.getHackingLevel() >= target.requiredHackingSkill) {
-        await ns.scp(["/worm/hacker.js"], target.hostname);
+        await ns.scp(["/worm/hack.js"], target.hostname);
         ns.exec("worm/open.js", "home", 1, target.hostname);
     }
 }

@@ -1,6 +1,6 @@
 import {
     getServers
-} from "helpers.js"
+} from "util/helpers.js"
 
 /** @param {import("index").NS } ns */
 export async function main(ns) {

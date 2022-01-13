@@ -61,3 +61,12 @@ export function sliceIntoChunks(arr, chunkSize) {
 export function uniqify(array) {
     return [...new Set(array)]
 }
+
+export function getRandomString() {
+    var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    for (var i = 0; i < 4; i++) {
+        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    }
+    return result;
+}

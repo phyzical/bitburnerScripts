@@ -1,7 +1,8 @@
 import {
     log,
-    getEquipment
-} from 'helpers.js'
+    getEquipment,
+    getRandomString,
+} from 'util/helpers.js'
 
 /** @param {import("index").NS } ns */
 export async function main(ns) {
@@ -118,13 +119,4 @@ export async function main(ns) {
         }
         await ns.sleep(1000 * 60 * 1)
     }
-}
-
-function getRandomString() {
-    var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < 4; i++) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-    }
-    return result;
 }

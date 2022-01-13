@@ -1,7 +1,7 @@
 import {
     sliceIntoChunks,
     uniqify
-} from 'helpers.js'
+} from 'util/helpers.js'
 /** @param {import("index").NS } ns */
 export async function main(ns) {
     // ns.clear("/solve-log.txt")

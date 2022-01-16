@@ -1,18 +1,12 @@
 import {
     log,
-    sliceIntoChunks
 } from "util/helpers"
 import {
-    CITIES,
-    COMPANY_UPGRADES,
-    DIVISION_TYPES,
-    FORMULAS,
     getPurchasableDivisionUpgrades,
     PRODUCT_THRESHOLD,
-    SINGLE_COMPANY_UPGRADES,
     UPGRADE_THRESHOLD
 } from "corp/run"
-
+import constants from "util/constants"
 const LOG_FILE = 'corporation-log.txt'
 
 /** @param {import("globals").NS } ns */
@@ -72,19 +66,19 @@ async function handleStocks(ns) {
 
 /** @param {import("globals").NS } ns */
 async function buyBoostMaterials(ns, divisionName, city) {
-    let boostMaterial = FORMULAS[divisionName].boost
+    let boostMaterial = constants.corporation.formulas[divisionName].boost
     ns.corporation.buyMaterial(divisionName, city, boostMaterial, 0)
     ns.corporation.sellMaterial(divisionName, city, boostMaterial, "MAX", 0)
     await ns.sleep(1)
 
     // if (ns.corporation.hasResearched(divisionName, "Bulk Purchasing")) {
-    //     let inputSpaceWeightPerTick = Object.keys(FORMULAS[divisionName].input)
-    //         .reduce((acc, materialName) => acc + (FORMULAS[divisionName].input[materialName] * MATERIAL_WEIGHTS[materialName]), 0)
+    //     let inputSpaceWeightPerTick = Object.keys(constants.corporation.formulas[divisionName].input)
+    //         .reduce((acc, materialName) => acc + (constants.corporation.formulas[divisionName].input[materialName] * MATERIAL_WEIGHTS[materialName]), 0)
     //     //assuming it produces 1
-    //     let materialInputSpaceWeightPerTick = inputSpaceWeightPerTick * FORMULAS[divisionName].output
+    //     let materialInputSpaceWeightPerTick = inputSpaceWeightPerTick * constants.corporation.formulas[divisionName].output
     //         .reduce((acc, materialName) => acc + (ns.corporation.getMaterial(divisionName, city, materialName).prod), 0)
 
-    //     let materialProductionSpacePerTick = FORMULAS[divisionName].output
+    //     let materialProductionSpacePerTick = constants.corporation.formulas[divisionName].output
     //         .reduce((acc, materialName) => acc + (ns.corporation.getMaterial(divisionName, city, materialName).prod * MATERIAL_WEIGHTS[materialName]), 0)
 
     //     //assuming it produces 1
@@ -117,7 +111,7 @@ async function buyBoostMaterials(ns, divisionName, city) {
 async function setSellPrices(ns, divisionName, city) {
     //sell materials
     ns.corporation.setSmartSupply(divisionName, city, true)
-    FORMULAS[divisionName].output.forEach(material => {
+    constants.corporation.formulas[divisionName].output.forEach(material => {
         ns.corporation.sellMaterial(divisionName, city, material, "MAX", "MP", true)
         if (ns.corporation.hasResearched(divisionName, "Market-TA.I")) {
             ns.corporation.setMaterialMarketTA1(divisionName, city, material, true)
@@ -162,30 +156,30 @@ async function purchaseWarehouses(ns, divisionName, city) {
 /** @param {import("globals").NS } ns */
 async function purchaseDivisions(ns) {
     // buy divisions
-    DIVISION_TYPES
+    constants.corporation.division.types
         .filter(x => !ns.corporation.getCorporation().divisions.find(y => y.name == x))
         .map(division => {
             if (ns.corporation.getExpandIndustryCost(division) < ns.corporation.getCorporation().funds) {
                 return ns.corporation.expandIndustry(division, division)
             }
         })
-    // buy cities
-    ns.corporation.getCorporation().divisions.map(division => CITIES
-        .filter(city => !division.cities.includes(city))
+    // buy constants.cities
+    ns.corporation.getCorporation().divisions.map(division => constants.cities
+        .filter(city => !division.constants.cities.includes(city))
         .map(city => ns.corporation.expandCity(division.name, city))
     )
 }
 
 /** @param {import("globals").NS } ns */
 async function purchaseCompanyUpgrades(ns) {
-    SINGLE_COMPANY_UPGRADES.filter(x => !ns.corporation.hasUnlockUpgrade(x))
+    constants.corporation.singleUpgrades.filter(x => !ns.corporation.hasUnlockUpgrade(x))
         .forEach(upgrade => {
             if (ns.corporation.getUnlockUpgradeCost(upgrade) < ns.corporation.getCorporation().funds) {
                 ns.corporation.unlockUpgrade(upgrade)
             }
         })
     await ns.sleep(1)
-    COMPANY_UPGRADES.forEach(upgrade => {
+    constants.corporation.upgrades.forEach(upgrade => {
         while (ns.corporation.getUpgradeLevelCost(upgrade) < (UPGRADE_THRESHOLD * ns.corporation.getCorporation().funds)) {
             ns.corporation.levelUpgrade(upgrade)
         }
@@ -237,9 +231,9 @@ async function addRemoveProducts(ns, divisionName) {
     //create products
     division = ns.corporation.getDivision(divisionName)
     if (division.products.length < maxProducts) {
-        let productCities = CITIES.filter(x => !division.products.includes(x))
+        let cities = constants.cities.filter(x => !division.products.includes(x))
         for (let i = 0; i < (maxProducts - division.products.length); i++) {
-            let product = productCities.pop()
+            let product = cities.pop()
             let investment = PRODUCT_THRESHOLD * ns.corporation.getCorporation().funds
             ns.corporation.makeProduct(division.name, product, product, investment, investment)
             await ns.sleep(1)

@@ -2,15 +2,14 @@
 export async function main(ns) {
     await ns.sleep(1000 * 5)
     let homeRam = ns.getServerMaxRam("home")
-    ns.exec("upgrades/purchaseTech.js", "home");
-    if (homeRam > 50) {
-        ns.exec("upgrades/hacknetBot.js", "home");
-    }
     ns.exec("worm/run.js", "home");
     await ns.sleep(1000 * 5)
+
+    ns.exec("upgrades/purchaseTech.js", "home");
+    ns.exec("upgrades/hacknetBot.js", "home");
     if (homeRam > 50) {
         ns.exec("contracts/run.js", "home");
-        // ns.exec("gang/run.js", "home");
+        ns.exec("gang/run.js", "home");
     }
     if (homeRam > 1024) {
         ns.exec("corp/run.js", "home");

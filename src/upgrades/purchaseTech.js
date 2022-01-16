@@ -1,3 +1,7 @@
+import {
+    log
+} from 'util/helpers'
+const LOG_FILE = "purchaseTech-log.txt"
 /** @param {import("globals").NS } ns */
 export async function main(ns) {
     let ram = null
@@ -12,7 +16,7 @@ export async function main(ns) {
 /** @param {import("globals").NS } ns */
 async function buyServers(ns, ram) {
     let servers = ns.getPurchasedServers()
-    let lowestRam = servers.reduce((acc, host) => {
+    let lowestRam = servers.length && servers.reduce((acc, host) => {
         let tempRam = ns.getServerMaxRam(host)
         return acc > tempRam ? tempRam : acc
     }, 99999999999999999999999999999999999999999999999999999999999999999999)
@@ -25,7 +29,7 @@ async function buyServers(ns, ram) {
     }, true)
 
     if ((ram == ns.getPurchasedServerMaxRam()) && equalRam) {
-        ns.kill("/upgrades/purchaseTech.js", "host")
+        ns.kill("/upgrades/purchaseTech.js", "home")
     }
 
     if (equalRam) {
@@ -36,9 +40,6 @@ async function buyServers(ns, ram) {
         ram = ram * 2
     }
     ram = lowestRam > ram / 2 ? lowestRam : ram / 2
-    await ns.write("purchaseTech-log.txt", ns.getPurchasedServerCost(ram) + "\n")
-
-    await ns.write("purchaseTech-log.txt", ram + "\n")
 
     if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
         if (servers.length == ns.getPurchasedServerLimit()) {

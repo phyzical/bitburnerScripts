@@ -12,7 +12,6 @@ export async function main(ns) {
         await openServers(ns, target)
         await copyFiles(ns, target)
     }
-
 }
 
 

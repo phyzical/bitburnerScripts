@@ -646,7 +646,9 @@ async function solve(ns, answer, contract) {
     if (reward) {
         await ns.write("solve-log.txt", `${contract.name} reward: ${reward}\n`)
         ns.rm(contract.filename)
+        return true
     } else {
         alert(`contract failure! ${contract.name} ${contract.type}, answer: ${answer}\n`)
+        return false
     }
 }

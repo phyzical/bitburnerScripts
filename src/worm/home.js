@@ -24,10 +24,17 @@ export async function main(ns) {
         if (homeRam > 1000000) {
             maxHackThreads = 400
         }
+        if (homeRam > 10000000) {
+            maxHackThreads = 800
+        }
+        if (homeRam > 100000000) {
+            maxHackThreads = 1200
+        }
         let threads = remainingThreads > maxHackThreads ? maxHackThreads : remainingThreads
         if (threads > 0 && target.hasAdminRights) {
             await ns.write("homeWorm-log.txt", `executing hacker on ${target.hostname}, threads: ${threads} \n`)
             ns.exec("worm/hack.js", "home", threads, target.hostname, target.moneyMax, target.minDifficulty);
+            await ns.sleep(1)
         }
         remainingThreads = remainingThreads - threads
     }

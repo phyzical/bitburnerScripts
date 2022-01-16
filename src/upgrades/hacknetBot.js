@@ -6,7 +6,7 @@ export async function main(ns) {
             earlyGame = false
         }
 
-        if (ns.hacknet.getPurchaseNodeCost() <= ns.getPlayer().money) {
+        while (ns.hacknet.getPurchaseNodeCost() <= ns.getPlayer().money) {
             ns.hacknet.purchaseNode()
         }
 

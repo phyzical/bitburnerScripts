@@ -1,3 +1,5 @@
+import { default as React_2 } from 'react';
+
 /**
  * @public
  */
@@ -841,6 +843,74 @@ export declare interface CodingContract {
  */
 export declare interface Corporation extends WarehouseAPI, OfficeAPI {
     /**
+     * Create a Corporation
+     * @param divisionName - Name of the division
+     * @param selfFund - If you should self fund, defaults to true, false will only work on Bitnode 3
+     * @returns true if created and false if not 
+     */
+    createCorporation(corporationName: string, selfFund: boolean): boolean;
+    /**
+     * Check if you have a one time unlockable upgrade
+     * @param upgradeName - Name of the upgrade
+     * @returns true if unlocked and false if not 
+     */
+    hasUnlockUpgrade(upgradeName: string): boolean;
+    /**
+     * Gets the cost to unlock a one time unlockable upgrade
+     * @param upgradeName - Name of the upgrade
+     * @returns cost of the upgrade
+     */
+    getUnlockUpgradeCost(upgradeName: string): number;
+    /**
+     * Get the level of a levelable upgrade
+     * @param upgradeName - Name of the upgrade
+     * @returns the level of the upgrade
+     */
+    getUpgradeLevel(upgradeName: string): number;
+    /**
+     * Gets the cost to unlock the next level of a levelable upgrade
+     * @param upgradeName - Name of the upgrade
+     * @returns cost of the upgrade
+     */
+    getUpgradeLevelCost(upgradeName: string): number;
+    /**
+     * Gets the cost to expand into a new industry
+     * @param industryName - Name of the industry
+     * @returns cost
+     */
+    getExpandIndustryCost(industryName: string): number;
+    /**
+     * Gets the cost to expand into a new city
+     * @returns cost
+     */
+    getExpandCityCost(): number;
+    /**
+     * Get an offer for investment based on you companies current valuation
+     * @returns An offer of investment
+     */
+    getInvestmentOffer(): InvestmentOffer;
+    /**
+     * Accept investment based on you companies current valuation
+     * @remarks
+     * Is based on current valuation and will not honer a specific Offer
+     * @returns An offer of investment
+     */
+    acceptInvestmentOffer(): boolean;
+    /**
+     * Go public
+     * @param numShares - number of shares you would like to issue for your IPO
+     * @returns true if you successfully go public, false if not
+     */
+    goPublic(numShares: number): boolean;
+    /**
+     * Bribe a faction
+     * @param factionName - Faction name
+     * @param amountCash - Amount of money to bribe
+     * @param amountShares - Amount of shares to bribe
+     * @returns True if successful, false if not
+     */
+    bribe(factionName: string, amountCash: number, amountShares: number): boolean;
+    /**
      * Get corporation data
      * @returns Corporation data
      */
@@ -864,7 +934,7 @@ export declare interface Corporation extends WarehouseAPI, OfficeAPI {
      */
     expandCity(divisionName: string, cityName: string): void;
     /**
-     * Unlock an upgrade.
+     * Unlock an upgrade
      * @param upgradeName - Name of the upgrade
      */
     unlockUpgrade(upgradeName: string): void;
@@ -907,6 +977,8 @@ export declare interface CorporationInfo {
     sharePrice: number;
     /** State of the corporation. Possible states are START, PURCHASE, PRODUCTION, SALE, EXPORT. */
     state: string;
+    /** Array of all divisions */
+    divisions: Division[];
 }
 
 /**
@@ -985,6 +1057,8 @@ export declare interface Division {
     upgrades: number[];
     /** Cities in which this division has expanded */
     cities: string[];
+    /** Products developed by this division */
+    products: string[];
 }
 
 /**
@@ -2129,6 +2203,54 @@ export declare interface HacknetServersFormulas {
 }
 
 /**
+ * Corporation investment offer
+ * @public
+ */
+export declare interface InvestmentOffer {
+    /** Amount of funds you will get from this investment */
+    funds: number;
+    /** Amount of share you will give in exchange for this investment */
+    shares: number;
+    /** Current round of funding (max 4) */
+    round: number;
+}
+
+/**
+ * Interface of a netscript port
+ * @public
+ */
+export declare interface IPort {
+    /** write data to the port and removes and returns first element if full */
+    write: (value: any) => any;
+    /** add data to port if not full.
+     * @returns true if added and false if full and not added */
+    tryWrite: (value: any) => boolean;
+    /** reads and removes first element from port
+     * if no data in port returns "NULL PORT DATA"
+     */
+    read: () => any;
+    /** reads first element without removing it from port
+     * if no data in port returns "NULL PORT DATA"
+     */
+    peek: () => any;
+    /** check if port is full */
+    full: () => boolean;
+    /** check if port is empty */
+    empty: () => boolean;
+    /** removes all data from port */
+    clear: () => void;
+}
+
+/**
+ * Interface Styles
+ * @internal
+ */
+export declare interface IStyleSettings {
+    fontFamily: React_2.CSSProperties["fontFamily"];
+    lineHeight: React_2.CSSProperties["lineHeight"];
+}
+
+/**
  * Material in a warehouse
  * @public
  */
@@ -2139,6 +2261,10 @@ export declare interface Material {
     qty: number;
     /** Quality of the material */
     qlt: number;
+    /** Amount of material produced  */
+    prod: number;
+    /** Amount of material sold  */
+    sell: number;
 }
 
 /**
@@ -3721,7 +3847,7 @@ export declare interface NS extends Singularity {
      * @param port - Port number. Must be an integer between 1 and 20.
      * @returns Data in the specified port.
      */
-    getPortHandle(port: number): any[];
+    getPortHandle(port: number): IPort;
 
     /**
      * Delete a file.
@@ -4186,7 +4312,7 @@ export declare interface OfficeAPI {
      */
     assignJob(divisionName: string, cityName: string, employeeName: string, job: string): Promise<void>;
     /**
-     * Assign an employee to a job.
+     * Hire an employee.
      * @param divisionName - Name of the division
      * @param cityName - Name of the city
      * @returns The newly hired employee, if any
@@ -4200,7 +4326,7 @@ export declare interface OfficeAPI {
      */
     upgradeOfficeSize(divisionName: string, cityName: string, size: number): void;
     /**
-     * Assign an employee to a job.
+     * Throw a party for your employees
      * @param divisionName - Name of the division
      * @param cityName - Name of the city
      * @param costPerEmployee - Amount to spend per employee.
@@ -4220,7 +4346,7 @@ export declare interface OfficeAPI {
      */
     hireAdVert(divisionName: string): void;
     /**
-     * Hire AdVert.
+     * Purchase a research
      * @param divisionName - Name of the division
      * @param researchName - Name of the research
      */
@@ -4240,6 +4366,49 @@ export declare interface OfficeAPI {
      * @returns Employee data
      */
     getEmployee(divisionName: string, cityName: string, employeeName: string): Employee;
+    /**
+     * Get the cost to Hire AdVert
+     * @param divisionName - Name of the division
+     * @returns Cost
+     */
+    getHireAdVertCost(divisionName: string): number;
+    /**
+     * Get the number of times you have Hired AdVert
+     * @param divisionName - Name of the division
+     * @returns Number of times you have Hired AdVert
+     */
+    getHireAdVertCount(adivisionName: string): number;
+    /**
+     * Get the cost to unlock research
+     * @param divisionName - Name of the division
+     * @param cityName - Name of the city
+     * @returns cost
+     */
+    getResearchCost(divisionName: string, researchName: string): number;
+    /**
+     * Gets if you have unlocked a research
+     * @param divisionName - Name of the division
+     * @param cityName - Name of the city
+     * @returns true is unlocked, false if not
+     */
+    hasResearched(divisionName: string, researchName: string): boolean;
+    /**
+     * Set the auto job assignment for a job
+     * @param divisionName - Name of the division
+     * @param cityName - Name of the city
+     * @param job - Name of the job
+     * @param amount - Number of employees to assign to that job
+     * @returns A promise that is fulfilled when the assignment is complete.
+     */
+    setAutoJobAssignment(divisionName: string, cityName: string, job: string, amount: number): Promise<boolean>;
+    /**
+     * Cost to Upgrade office size.
+     * @param divisionName - Name of the division
+     * @param cityName - Name of the city
+     * @param size - Amount of positions to open
+     * @returns Cost of upgrading the office
+     */
+    getOfficeSizeUpgradeCost(divisionName: string, cityName: string, asize: number): number;
 }
 
 /**
@@ -4332,6 +4501,7 @@ export declare interface Player {
     jobs: any;
     factions: string[];
     tor: boolean;
+    hasCorporation: boolean;
 }
 
 /**
@@ -4385,6 +4555,12 @@ export declare interface Product {
     pCost: number;
     /** Sell cost, can be "MP+5" */
     sCost: string | number;
+    /** Data refers to the production, sale, and quantity of the products 
+     * These values are specific to a city 
+     * For each city, the data is [qty, prod, sell] */
+    cityData: {[key: string]:number[]};
+    /** Creation progress - A number between 0-100 representing percentage */
+    developmentProgress: number;
 }
 
 /**
@@ -4499,15 +4675,15 @@ export declare interface Server {
 /**
  * Singularity API
  * @remarks
- * This API requires Source-File 4 level 1 / 2 / 3 to use.
+ * This API requires Source-File 4 level 1 to use. The RAM cost of all these functions is multiplied by 16/4/1 based on Source-File 4 levels.
  * @public
  */
 export declare interface Singularity {
     /**
-     * SF4.1 - Take university class.
+     * Take university class.
      *
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * This function will automatically set you to start taking a course at a university.
@@ -4525,10 +4701,10 @@ export declare interface Singularity {
     universityCourse(universityName: string, courseName: string): boolean;
 
     /**
-     * SF4.1 - Workout at the gym.
+     * Workout at the gym.
      *
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
 
      * This function will automatically set you to start working out at a gym to train
@@ -4546,9 +4722,9 @@ export declare interface Singularity {
     gymWorkout(gymName: string, stat: string): boolean;
 
     /**
-     * SF4.1 - Travel to another city.
+     * Travel to another city.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * This function allows the player to travel to any city. The cost for using this
@@ -4560,9 +4736,9 @@ export declare interface Singularity {
     travelToCity(city: string): boolean;
 
     /**
-     * SF4.1 - Purchase the TOR router.
+     * Purchase the TOR router.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * This function allows you to automatically purchase a TOR router. The cost for
@@ -4574,9 +4750,9 @@ export declare interface Singularity {
     purchaseTor(): boolean;
 
     /**
-     * SF4.1 - Purchase a program from the dark web.
+     * Purchase a program from the dark web.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * This function allows you to automatically purchase programs. You MUST have a
@@ -4600,9 +4776,9 @@ export declare interface Singularity {
     purchaseProgram(programName: string): boolean;
 
     /**
-     * SF4.1 - Check if the player is busy.
+     * Check if the player is busy.
      * @remarks
-     * RAM cost: 0.5 GB
+     * RAM cost: 0.5 GB * 16/4/1
      *
      *
      * Returns a boolean indicating whether or not the player is currently performing an
@@ -4614,9 +4790,9 @@ export declare interface Singularity {
     isBusy(): boolean;
 
     /**
-     * SF4.1 - Stop the current action.
+     * Stop the current action.
      * @remarks
-     * RAM cost: 1 GB
+     * RAM cost: 1 GB * 16/4/1
      *
      *
      * This function is used to end whatever ‘action’ the player is currently performing.
@@ -4637,9 +4813,9 @@ export declare interface Singularity {
     stopAction(): boolean;
 
     /**
-     * SF4.2 - Upgrade home computer RAM.
+     * Upgrade home computer RAM.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will upgrade amount of RAM on the player’s home computer. The cost is
@@ -4652,9 +4828,9 @@ export declare interface Singularity {
     upgradeHomeRam(): boolean;
 
     /**
-     * SF4.2 - Upgrade home computer cores.
+     * Upgrade home computer cores.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will upgrade amount of cores on the player’s home computer. The cost is
@@ -4667,9 +4843,9 @@ export declare interface Singularity {
     upgradeHomeCores(): boolean;
 
     /**
-     * SF4.2 - Get the price of upgrading home RAM.
+     * Get the price of upgrading home RAM.
      * @remarks
-     * RAM cost: 1.5 GB
+     * RAM cost: 1.5 GB * 16/4/1
      *
      *
      * Returns the cost of upgrading the player’s home computer RAM.
@@ -4679,9 +4855,9 @@ export declare interface Singularity {
     getUpgradeHomeRamCost(): number;
 
     /**
-     * SF4.2 - Get the price of upgrading home cores.
+     * Get the price of upgrading home cores.
      * @remarks
-     * RAM cost: 1.5 GB
+     * RAM cost: 1.5 GB * 16/4/1
      *
      *
      * Returns the cost of upgrading the player’s home computer cores.
@@ -4691,9 +4867,9 @@ export declare interface Singularity {
     getUpgradeHomeCoresCost(): number;
 
     /**
-     * SF4.2 - Work for a company.
+     * Work for a company.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will automatically set you to start working at the company
@@ -4733,9 +4909,9 @@ export declare interface Singularity {
     workForCompany(companyName?: string, focus?: boolean): boolean;
 
     /**
-     * SF4.2 - Apply for a job at a company.
+     * Apply for a job at a company.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will automatically try to apply to the specified company
@@ -4754,9 +4930,9 @@ export declare interface Singularity {
     applyToCompany(companyName: string, field: string): boolean;
 
     /**
-     * SF4.2 - Get company reputation.
+     * Get company reputation.
      * @remarks
-     * RAM cost: 1 GB
+     * RAM cost: 1 GB * 16/4/1
      *
      *
      * This function will return the amount of reputation you have at the specified company.
@@ -4768,9 +4944,9 @@ export declare interface Singularity {
     getCompanyRep(companyName: string): number;
 
     /**
-     * SF4.2 - Get company favor.
+     * Get company favor.
      * @remarks
-     * RAM cost: 1 GB
+     * RAM cost: 1 GB * 16/4/1
      *
      *
      * This function will return the amount of favor you have at the specified company.
@@ -4782,9 +4958,9 @@ export declare interface Singularity {
     getCompanyFavor(companyName: string): number;
 
     /**
-     * SF4.2 - Get company favor gain.
+     * Get company favor gain.
      * @remarks
-     * RAM cost: 0.75 GB
+     * RAM cost: 0.75 GB * 16/4/1
      *
      *
      * This function will return the amount of favor you will gain for the specified
@@ -4796,9 +4972,9 @@ export declare interface Singularity {
     getCompanyFavorGain(companyName: string): number;
 
     /**
-     * SF4.2 - List all current faction invitations.
+     * List all current faction invitations.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * Returns an array with the name of all Factions you currently have oustanding invitations from.
@@ -4808,9 +4984,9 @@ export declare interface Singularity {
     checkFactionInvitations(): string[];
 
     /**
-     * SF4.2 - Join a faction.
+     * Join a faction.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will automatically accept an invitation from a faction and join it.
@@ -4821,9 +4997,9 @@ export declare interface Singularity {
     joinFaction(faction: string): boolean;
 
     /**
-     * SF4.2 - Work for a faction.
+     * Work for a faction.
      * @remarks
-     * RAM cost: 3 GB
+     * RAM cost: 3 GB * 16/4/1
      *
      *
      * This function will automatically set you to start working for the specified faction.
@@ -4864,9 +5040,9 @@ export declare interface Singularity {
     workForFaction(faction: string, workType: string, focus?: boolean): boolean;
 
     /**
-     * SF4.2 - Get faction reputation.
+     * Get faction reputation.
      * @remarks
-     * RAM cost: 1 GB
+     * RAM cost: 1 GB * 16/4/1
      *
      *
      * This function returns the amount of reputation you have for the specified faction.
@@ -4877,9 +5053,9 @@ export declare interface Singularity {
     getFactionRep(faction: string): number;
 
     /**
-     * SF4.2 - Get faction favor.
+     * Get faction favor.
      * @remarks
-     * RAM cost: 1 GB
+     * RAM cost: 1 GB * 16/4/1
      *
      *
      * This function returns the amount of favor you have for the specified faction.
@@ -4890,9 +5066,9 @@ export declare interface Singularity {
     getFactionFavor(faction: string): number;
 
     /**
-     * SF4.2 - Get faction favor gain.
+     * Get faction favor gain.
      * @remarks
-     * RAM cost: 0.75 GB
+     * RAM cost: 0.75 GB * 16/4/1
      *
      *
      * This function returns the amount of favor you will gain for the specified
@@ -4904,9 +5080,9 @@ export declare interface Singularity {
     getFactionFavorGain(faction: string): number;
 
     /**
-     * SF4.3 - Donate to a faction.
+     * Donate to a faction.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * Attempts to donate money to the specified faction in exchange for reputation.
@@ -4919,9 +5095,9 @@ export declare interface Singularity {
     donateToFaction(faction: string, amount: number): boolean;
 
     /**
-     * SF4.3 - Create a program.
+     * Create a program.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function will automatically set you to start working on creating the
@@ -4959,9 +5135,9 @@ export declare interface Singularity {
     createProgram(program: string): boolean;
 
     /**
-     * SF4.3 - Commit a crime.
+     * Commit a crime.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function is used to automatically attempt to commit crimes.
@@ -4981,14 +5157,14 @@ export declare interface Singularity {
      * guarantee that your browser will follow that time limit.
      *
      * @param crime - Name of crime to attempt.
-     * @returns True if you successfully start working on the specified program, and false otherwise.
+     * @returns The number of milliseconds it takes to attempt the specified crime.
      */
     commitCrime(crime: string): number;
 
     /**
-     * SF4.3 - Get chance to successfully commit a crime.
+     * Get chance to successfully commit a crime.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function returns your chance of success at commiting the specified crime.
@@ -4999,9 +5175,9 @@ export declare interface Singularity {
     getCrimeChance(crime: string): number;
 
     /**
-     * SF4.3 - Get stats related to a crime.
+     * Get stats related to a crime.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * Returns the stats of the crime.
@@ -5012,9 +5188,9 @@ export declare interface Singularity {
     getCrimeStats(crime: string): CrimeStats;
 
     /**
-     * SF4.3 - Get a list of owned augmentation.
+     * Get a list of owned augmentation.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function returns an array containing the names (as strings) of all Augmentations you have.
@@ -5025,9 +5201,9 @@ export declare interface Singularity {
     getOwnedAugmentations(purchased?: boolean): string[];
 
     /**
-     * SF4.3 - Get a list of augmentation available from a faction.
+     * Get a list of augmentation available from a faction.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * Returns an array containing the names (as strings) of all Augmentations
@@ -5039,9 +5215,9 @@ export declare interface Singularity {
     getAugmentationsFromFaction(faction: string): string[];
 
     /**
-     * SF4.3 - Get the pre-requisite of an augmentation.
+     * Get the pre-requisite of an augmentation.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function returns an array with the names of the prerequisite Augmentation(s) for the specified Augmentation.
@@ -5053,10 +5229,10 @@ export declare interface Singularity {
     getAugmentationPrereq(augName: string): string[];
 
     /**
-     * SF4.3 - Get the price and reputation of an augmentation.
+     * Get the price and reputation of an augmentation.
      * @deprecated use getAugmentationPrice getAugmentationRepCost
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function returns an array with two elements that gives the cost for
@@ -5073,9 +5249,9 @@ export declare interface Singularity {
     getAugmentationCost(augName: string): [number, number];
 
     /**
-     * SF4.3 - Get price of an augmentation.
+     * Get price of an augmentation.
      * @remarks
-     * RAM cost: 2.5 GB
+     * RAM cost: 2.5 GB * 16/4/1
      *
      *
      * @param augName - Name of Augmentation.
@@ -5084,9 +5260,9 @@ export declare interface Singularity {
     getAugmentationPrice(augName: string): number;
 
     /**
-     * SF4.3 - Get reputation requirement of an augmentation.
+     * Get reputation requirement of an augmentation.
      * @remarks
-     * RAM cost: 2.5 GB
+     * RAM cost: 2.5 GB * 16/4/1
      *
      *
      * @param augName - Name of Augmentation.
@@ -5095,9 +5271,9 @@ export declare interface Singularity {
     getAugmentationRepReq(augName: string): number;
 
     /**
-     * SF4.3 - Purchase an augmentation
+     * Purchase an augmentation
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function will try to purchase the specified Augmentation through the given Faction.
@@ -5111,9 +5287,9 @@ export declare interface Singularity {
     purchaseAugmentation(faction: string, augmentation: string): boolean;
 
     /**
-     * SF4.3 - Get the stats of an augmentation.
+     * Get the stats of an augmentation.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function returns augmentation stats.
@@ -5124,9 +5300,9 @@ export declare interface Singularity {
     getAugmentationStats(name: string): AugmentationStats;
 
     /**
-     * SF4.3 - Install your purchased augmentations.
+     * Install your purchased augmentations.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function will automatically install your Augmentations, resetting the game as usual.
@@ -5136,11 +5312,11 @@ export declare interface Singularity {
     installAugmentations(cbScript?: string): void;
 
     /**
-     * SF4.1 - Returns an object with the Player’s stats.
+     * Returns an object with the Player’s stats.
      * @deprecated use getPlayer
      *
      * @remarks
-     * RAM cost: 0.5 GB
+     * RAM cost: 0.5 GB * 16/4/1
      *
      *
      * @example
@@ -5153,11 +5329,11 @@ export declare interface Singularity {
     getStats(): PlayerSkills;
 
     /**
-     * SF4.1 - Returns an object with various information about your character.
+     * Returns an object with various information about your character.
      * @deprecated use getPlayer
      *
      * @remarks
-     * RAM cost: 0.5 GB
+     * RAM cost: 0.5 GB * 16/4/1
      *
      *
      * @returns Object with various information about your character.
@@ -5165,9 +5341,9 @@ export declare interface Singularity {
     getCharacterInformation(): CharacterInfo;
 
     /**
-     * SF4.1 - Hospitalize the player.
+     * Hospitalize the player.
      * @remarks
-     * RAM cost: 0.25 GB
+     * RAM cost: 0.25 GB * 16/4/1
      *
      *
      * @returns The cost of the hospitalization.
@@ -5175,9 +5351,9 @@ export declare interface Singularity {
     hospitalize(): number;
 
     /**
-     * SF4.3 - Soft reset the game.
+     * Soft reset the game.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * This function will perform a reset even if you don’t have any augmentation installed.
@@ -5187,9 +5363,9 @@ export declare interface Singularity {
     softReset(cbScript: string): void;
 
     /**
-     * SF4.3 - Go to a location.
+     * Go to a location.
      * @remarks
-     * RAM cost: 5 GB
+     * RAM cost: 5 GB * 16/4/1
      *
      *
      * Move the player to a specific location.
@@ -5200,9 +5376,9 @@ export declare interface Singularity {
     goToLocation(locationName: string): boolean;
 
     /**
-     * SF4.1 - Get the current server.
+     * Get the current server.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * @returns Name of the current server.
@@ -5210,9 +5386,9 @@ export declare interface Singularity {
     getCurrentServer(): string;
 
     /**
-     * SF4.1 - Connect to a server.
+     * Connect to a server.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * Run the connect HOSTNAME command in the terminal. Can only connect to neighbors.
@@ -5222,9 +5398,9 @@ export declare interface Singularity {
     connect(hostname: string): boolean;
 
     /**
-     * SF4.1 - Run the hack command in the terminal.
+     * Run the hack command in the terminal.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
      * @returns Amount of money stolen by manual hacking.
@@ -5232,19 +5408,19 @@ export declare interface Singularity {
     manualHack(): Promise<number>;
 
     /**
-     * SF4.1 - Run the backdoor command in the terminal.
+     * Run the backdoor command in the terminal.
      * @remarks
-     * RAM cost: 2 GB
+     * RAM cost: 2 GB * 16/4/1
      *
      *
-     * @returns True if the installation was successful.
+     * @returns Promise waiting for the installation to finish.
      */
     installBackdoor(): Promise<void>;
 
     /**
-     * SF4.2 - Check if the player is focused.
+     * Check if the player is focused.
      * @remarks
-     * RAM cost: 0.1 GB
+     * RAM cost: 0.1 GB * 16/4/1
      *
      *
      * @returns True if the player is focused.
@@ -5252,9 +5428,9 @@ export declare interface Singularity {
     isFocused(): boolean;
 
     /**
-     * SF4.2 - Set the players focus.
+     * Set the players focus.
      * @remarks
-     * RAM cost: 0.1 GB
+     * RAM cost: 0.1 GB * 16/4/1
      *
      * @returns True if the focus was changed.
      */
@@ -6103,6 +6279,37 @@ export declare interface UserInterface {
      * RAM cost: cost: 0 GB
      */
     resetTheme(): void;
+
+
+    /**
+     * Get the current styles
+     * @remarks
+     * RAM cost: cost: 0 GB
+     *
+     * @returns An object containing the player's styles
+     */
+    getStyles(): IStyleSettings;
+
+    /**
+     * Sets the current styles
+     * @remarks
+     * RAM cost: cost: 0 GB
+     * @example
+     * Usage example (NS2)
+     * ```ts
+     * const styles = ns.ui.getStyles();
+     * styles.fontFamily = 'Comic Sans Ms';
+     * ns.ui.setStyles(styles);
+     * ```
+     */
+    setStyles(newStyles: IStyleSettings): void;
+
+    /**
+     * Resets the player's styles to the default values
+     * @remarks
+     * RAM cost: cost: 0 GB
+     */
+    resetStyles(): void;
 }
 
 /**
@@ -6159,6 +6366,8 @@ export declare interface Warehouse {
     size: number;
     /** Used space in the warehouse */
     sizeUsed: number;
+    /** Smart Supply status in the warehouse */
+    smartSupplyEnabled: boolean;
 }
 
 /**
@@ -6187,12 +6396,12 @@ export declare interface WarehouseAPI {
      * @param all - Sell in all city
      */
     sellProduct(
-        divisionName: string,
-        cityName: string,
-        productName: string,
-        amt: string,
-        price: string,
-        all: boolean,
+    divisionName: string,
+    cityName: string,
+    productName: string,
+    amt: string,
+    price: string,
+    all: boolean,
     ): void;
     /**
      * Discontinue a product.
@@ -6276,12 +6485,12 @@ export declare interface WarehouseAPI {
      * @param amt - Amount of material to export.
      */
     exportMaterial(
-        sourceDivision: string,
-        sourceCity: string,
-        targetDivision: string,
-        targetCity: string,
-        materialName: string,
-        amt: number,
+    sourceDivision: string,
+    sourceCity: string,
+    targetDivision: string,
+    targetCity: string,
+    materialName: string,
+    amt: number,
     ): void;
     /**
      * Cancel material export
@@ -6293,12 +6502,12 @@ export declare interface WarehouseAPI {
      * @param amt - Amount of material to export.
      */
     cancelExportMaterial(
-        sourceDivision: string,
-        sourceCity: string,
-        targetDivision: string,
-        targetCity: string,
-        materialName: string,
-        amt: number,
+    sourceDivision: string,
+    sourceCity: string,
+    targetDivision: string,
+    targetCity: string,
+    materialName: string,
+    amt: number,
     ): void;
     /**
      * Purchase warehouse for a new city
@@ -6321,12 +6530,27 @@ export declare interface WarehouseAPI {
      * @param marketingInvest - Amount to invest for the marketing of the product.
      */
     makeProduct(
-        divisionName: string,
-        cityName: string,
-        productName: string,
-        designInvest: number,
-        marketingInvest: number,
+    divisionName: string,
+    cityName: string,
+    productName: string,
+    designInvest: number,
+    marketingInvest: number,
     ): void;
+    /**
+     * Gets the cost to purchase a warehouse
+     * @returns cost
+     */
+    getPurchaseWarehouseCost(): number;
+    /**
+     * Gets the cost to upgrade a warehouse to the next level
+     * @returns cost to upgrade
+     */
+    getUpgradeWarehouseCost(adivisionName: any, acityName: any): number;
+    /**
+     * Check if you have a warehouse in city
+     * @returns true if warehouse is present, false if not
+     */
+    hasWarehouse(adivisionName: any, acityName: any): boolean;
 }
 
 export { }

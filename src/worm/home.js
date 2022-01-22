@@ -1,3 +1,4 @@
+import constants from "util/constants";
 import {
     getServers
 } from "util/helpers.js"
@@ -10,7 +11,8 @@ export async function main(ns) {
     const ramUsage = 2.2;
     let homeRam = ns.getServerMaxRam("home")
     let ram = homeRam - ns.getServerUsedRam("home")
-    ram = homeRam > 50 ? ram - 20 : ram
+    const ramToReserve = (Math.max(...constants.scripts.upgrades.map(x => ns.getScriptRam(x))) + Math.max(...constants.scripts.player.map(x => ns.getScriptRam(x)))) || 20
+    ram = homeRam > 50 ? ram - ramToReserve : ram
     let remainingThreads = Math.floor((ram) / ramUsage)
     while (remainingThreads > 0) {
         let target = serversWithCash[Math.floor(Math.random() * serversWithCash.length)]

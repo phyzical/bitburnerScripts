@@ -25,7 +25,6 @@ export async function main(ns) {
     if (!ns.hasRootAccess(target)) {
         ns.nuke(target);
     }
-    // await ns.installBackdoor()
     if (target != "home") {
         ns.killall(target)
     }

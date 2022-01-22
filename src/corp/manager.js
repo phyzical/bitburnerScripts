@@ -211,32 +211,33 @@ async function purchaseDivisionUpgrades(ns, divisionName) {
 /** @param {import("globals").NS } ns */
 async function addRemoveProducts(ns, divisionName) {
     let division = ns.corporation.getDivision(divisionName)
+    if (division.makesProducts) {
+        let maxProducts = division.products.length
+        if (ns.corporation.hasResearched(divisionName, "uPgrade: Capacity.II")) {
+            maxProducts = 5
+        } else if (ns.corporation.hasResearched(divisionName, "uPgrade: Capacity.I")) {
+            maxProducts = 4
+        }
 
-    let maxProducts = division.products.length
-    if (ns.corporation.hasResearched(divisionName, "uPgrade: Capacity.II")) {
-        maxProducts = 5
-    } else if (ns.corporation.hasResearched(divisionName, "uPgrade: Capacity.I")) {
-        maxProducts = 4
-    }
+        //remove Products
+        if (division.products.length == maxProducts) {
+            division.products.forEach(product => {
+                if (ns.corporation.getProduct(division.name, product).developmentProgress >= 100 && ns.corporation.getProduct(division.name, product).dmd < 5) {
+                    ns.corporation.discontinueProduct(division.name, product)
+                }
+            })
+        }
 
-    //remove Products
-    if (division.products.length == maxProducts) {
-        division.products.forEach(product => {
-            if (ns.corporation.getProduct(division.name, product).developmentProgress >= 100 && ns.corporation.getProduct(division.name, product).dmd < 5) {
-                ns.corporation.discontinueProduct(division.name, product)
+        //create products
+        division = ns.corporation.getDivision(divisionName)
+        if (division.products.length < maxProducts) {
+            let cities = constants.cities.filter(x => !division.products.includes(x))
+            for (let i = 0; i < (maxProducts - division.products.length); i++) {
+                let product = cities.pop()
+                let investment = PRODUCT_THRESHOLD * ns.corporation.getCorporation().funds
+                ns.corporation.makeProduct(division.name, product, product, investment, investment)
+                await ns.sleep(1)
             }
-        })
-    }
-
-    //create products
-    division = ns.corporation.getDivision(divisionName)
-    if (division.products.length < maxProducts) {
-        let cities = constants.cities.filter(x => !division.products.includes(x))
-        for (let i = 0; i < (maxProducts - division.products.length); i++) {
-            let product = cities.pop()
-            let investment = PRODUCT_THRESHOLD * ns.corporation.getCorporation().funds
-            ns.corporation.makeProduct(division.name, product, product, investment, investment)
-            await ns.sleep(1)
         }
     }
 }

@@ -9,16 +9,15 @@ export async function main(ns) {
         serversWithCash
     } = await getServers(ns)
     await ns.clear("worm-log.txt")
-    const ramUsage = 2.2;
 
     for (let server of servers) {
-        let remainingThreads = Math.floor(server.maxRam / ramUsage)
+        let remainingThreads = Math.floor(server.maxRam / ns.getScriptRam("/worm/hack.js"))
 
         while (remainingThreads > 1) {
             await ns.write("worm-log.txt", `server ${server.hostname} has ${remainingThreads} threads remaining \n`)
             let target = serversWithCash[Math.floor(Math.random() * serversWithCash.length)]
             let privateServer = servers.find(x => x.hostname.includes("pserv-"))
-            let maxHackThreads = 50 //Math.floor(ns.hackAnalyzeThreads(target.hostname, target.moneyAvailable) * (target.moneyMax / target.moneyAvailable))
+            let maxHackThreads = 50
             if (privateServer && privateServer.hostname.includes("TB")) {
                 maxHackThreads = 200
             }

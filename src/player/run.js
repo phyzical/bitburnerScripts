@@ -13,8 +13,12 @@ export async function main(ns) {
             }
             await ns.sleep(1000 * 5)
         }
-        // todo while not working || hsa been 5 minutes in 5 second interval checks?
-        await ns.sleep(1000 * 60 * 5)
-        // todo add something to auto apply augmentations
+
+        let i = 0;
+        // 60 * 5 or stops working
+        while (i < 60 && ns.getPlayer().isWorking) {
+            await ns.sleep(1000 * 5)
+            i++
+        }
     }
 }

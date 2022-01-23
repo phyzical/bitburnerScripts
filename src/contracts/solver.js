@@ -555,7 +555,7 @@ async function solveMergeOverlappingIntervals(ns, contract) {
         i++
     }
 
-    let answer = sliceIntoChunks(inputs.reduce((acc, x) => acc.concat(x), []).sort(), 2)
+    let answer = sliceIntoChunks(inputs.reduce((acc, x) => acc.concat(x), []).sort().reverse(), 2)
     // await ns.write("solve-log.txt", answer)
 
     await solve(ns, answer, contract)

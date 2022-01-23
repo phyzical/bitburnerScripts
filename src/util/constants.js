@@ -275,8 +275,9 @@ export default {
             "/player/factions.js",
             "/player/crime.js",
             "/player/train.js",
-            "/player/travel.js",
             "/player/work.js",
+            "/player/travel.js",
+            "/player/augment.js",
         ],
         upgrades: [
             "/upgrades/home.js",

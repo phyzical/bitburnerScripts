@@ -10,5 +10,6 @@ export async function main(ns) {
             }
             await ns.sleep(1000 * 1)
         }
+        await ns.sleep(1000 * 60)
     }
 }

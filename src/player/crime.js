@@ -1,5 +1,6 @@
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
-    //todo should we commit crimes until gang is unlocked?
-    ns.commitCrime("homicide")
+    if (!ns.gang.inGang()) {
+        ns.commitCrime("homicide")
+    }
 }

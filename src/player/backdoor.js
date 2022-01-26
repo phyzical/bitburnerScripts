@@ -2,7 +2,7 @@ import {
     getServers
 } from "util/helpers";
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     const {
         servers

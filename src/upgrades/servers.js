@@ -1,4 +1,4 @@
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let servers = ns.getPurchasedServers()
     let lowestRam = servers.length && servers.reduce((acc, host) => {

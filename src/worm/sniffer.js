@@ -2,7 +2,7 @@ import {
     getServers
 } from "util/helpers.js"
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let {
         servers
@@ -15,16 +15,20 @@ export async function main(ns) {
 }
 
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 async function copyFiles(ns, target) {
     let files = ns.ls(target.hostname, ".txt")
         .concat(ns.ls(target.hostname, ".lit"))
     if (files.length) {
         await ns.scp(files, target.hostname, "home")
+
+        // files
+        //     .filter(x => !x.includes("files"))
+        //     .forEach(x => ns.mv("home", x, `files/${x}`))
     }
 }
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 async function openServers(ns, target) {
     if (ns.getHackingLevel() >= target.requiredHackingSkill) {
         await ns.scp(["/worm/hack.js"], target.hostname);

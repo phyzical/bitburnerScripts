@@ -2,7 +2,7 @@ import {
     getServers
 } from "util/helpers.js"
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let {
         servers,

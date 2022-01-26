@@ -1,4 +1,4 @@
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     while (ns.hacknet.getPurchaseNodeCost() <= ns.getPlayer().money) {
         ns.hacknet.purchaseNode()

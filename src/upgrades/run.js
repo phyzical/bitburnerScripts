@@ -1,6 +1,6 @@
 import constants from "util/constants";
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     while (1) {
         for (let script of constants.scripts.upgrades) {

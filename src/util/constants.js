@@ -58,14 +58,14 @@ export default {
             Formulas: 5000000000,
         },
         stats: {
-            gym: ["strength", "agility", "dexterity", "defence"],
+            gym: ["strength", "agility", "dexterity", "defense"],
             university: ["charisma", "hacking"]
         },
         university: {
             city: "Volhaven",
             name: "ZB Institute of Technology",
-            hacking: "Algorithms course",
-            charisma: "Leadership course"
+            hacking: "Algorithms",
+            charisma: "Leadership"
         },
         gym: {
             city: "Sector-12",
@@ -269,12 +269,20 @@ export default {
         }
     },
     scripts: {
+        corporation: [
+            "/corp/assign.js",
+            "/corp/manager.js"
+        ],
+        gang: [
+            "/gang/assign.js",
+            "/gang/equipment.js"
+        ],
         player: [
             "/player/backdoor.js",
             "/player/programs.js",
-            "/player/factions.js",
-            "/player/crime.js",
             "/player/train.js",
+            "/player/crime.js",
+            "/player/factions.js",
             "/player/work.js",
             "/player/travel.js",
             "/player/augment.js",

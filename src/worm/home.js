@@ -3,7 +3,7 @@ import {
     getServers
 } from "util/helpers.js"
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let {
         serversWithCash
@@ -11,7 +11,7 @@ export async function main(ns) {
     const ramUsage = 2.2;
     let homeRam = ns.getServerMaxRam("home")
     let ram = homeRam - ns.getServerUsedRam("home")
-    const ramToReserve = (Math.max(...constants.scripts.upgrades.map(x => ns.getScriptRam(x))) + Math.max(...constants.scripts.player.map(x => ns.getScriptRam(x)))) || 20
+    const ramToReserve = Object.keys(constants.scripts).map(key => (Math.max(...constants.scripts[key].map(x => ns.getScriptRam(x))))).reduce((acc, x) => acc + x, 0) || 20
     ram = homeRam > 50 ? ram - ramToReserve : ram
     let remainingThreads = Math.floor((ram) / ramUsage)
     while (remainingThreads > 0) {

@@ -1,0 +1,6 @@
+{
+    "name": "bitburner-scripts",
+    "scripts": {
+        "defs": "node ./updateDefs.js"
+    }
+}

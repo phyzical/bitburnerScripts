@@ -1,16 +1,11 @@
 import constants from "util/constants"
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
-    const statTrainingCap = 125
+    const statTrainingCap = 100
     const trainableStats = constants.player.stats.gym
         .concat(constants.player.stats.university)
-        .reduce((acc, x) => {
-            if (ns.getPlayer()[x] < statTrainingCap) {
-                acc.push(x)
-            }
-            return acc
-        }, [])
+        .filter((x) => ns.getPlayer()[x] < statTrainingCap)
     if (constants.player.stats.gym.includes(trainableStats[0])) {
         const gym = constants.player.gym
         ns.travelToCity(gym.city)

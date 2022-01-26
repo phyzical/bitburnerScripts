@@ -1,6 +1,6 @@
 import constants from "util/constants"
 
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     if (!ns.getPlayer().tor) {
         await ns.purchaseTor()

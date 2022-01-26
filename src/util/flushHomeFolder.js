@@ -1,4 +1,4 @@
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     var arr = ns.ls(ns.getHostname());
     arr = arr.filter(x => !x.includes(".exe"))

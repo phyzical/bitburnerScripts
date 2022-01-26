@@ -1,4 +1,4 @@
-/** @param {import("globals").NS } ns */
+/** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     while (1) {
         ns.exec("contracts/sniffer.js", "home");

@@ -1,7 +1,3 @@
-import {
-    getEquipment,
-} from 'util/helpers.js'
-
 /** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let allItems = await getEquipment(ns)
@@ -27,4 +23,18 @@ export async function main(ns) {
             }
         }
     }
+}
+
+
+/** @param {import("NetscriptDefinitions").NS } ns */
+async function getEquipment(ns) {
+    return ns.gang.getEquipmentNames().reduce((acc, item) => {
+        let type = ns.gang.getEquipmentType(item)
+        acc[type] = [{
+            name: item,
+            cost: ns.gang.getEquipmentCost(item),
+            stats: ns.gang.getEquipmentStats(item)
+        }].concat(acc[type] || []).sort((a, b) => a.cost - b.cost)
+        return acc
+    }, {})
 }

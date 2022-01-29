@@ -1,15 +1,25 @@
 import {
-    getServers
+    getServers,
 } from "util/helpers";
-
 /** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     const {
-        servers
+        connectPathsFromHome
     } = await getServers(ns)
-    for (let server of servers.filter(x => !x.backdoorInstalled && !x.hostname.includes("pserv-"))) {
-        ns.connect(server.hostname)
+    for (let [hostname, {
+            path
+        }] of Object.entries(connectPathsFromHome).filter(([hostname, {
+            server
+        }]) => !server.backdoorInstalled && ns.hasRootAccess(hostname) && !hostname.includes("pserv-"))) {
+
+        if (!ns.getServer("home").isConnectedTo)
+            ns.connect("home")
+        path.forEach(ns.connect)
+        ns.connect(hostname)
         await ns.installBackdoor()
     }
-    ns.connect("home")
+
+    if (!ns.getServer("home").isConnectedTo) {
+        ns.connect("home")
+    }
 }

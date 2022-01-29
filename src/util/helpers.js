@@ -1,33 +1,56 @@
 /** @param {import("NetscriptDefinitions").NS } ns */
 export async function getServers(ns, ignoreHackingRequirement = false) {
-    var servers = ns.scan("home")
-    let length = 0
+    var servers = ns.scan("home").map(x => ({
+        server: ns.getServer(x),
+        path: ["home"]
+    }))
+    let length = -1
     while (servers.length != length) {
         length = servers.length
-        servers.forEach((server) => {
-            servers = servers.concat(ns.scan(server).filter(x => !servers.includes(x)));
+        servers.forEach(({
+            server: {
+                hostname
+            },
+            path
+        }) => {
+            let neighbors = ns.scan(hostname)
+            let missingHosts = neighbors
+                .filter((neighbor) => neighbor != "home" && !servers.find((x) => x.server.hostname == neighbor))
+                .map(x => ({
+                    server: ns.getServer(x),
+                    path: path.concat(hostname)
+                }))
+            servers = servers.concat(missingHosts);
         })
     }
 
-    servers = servers.filter(x => x != "home")
+    const connectPathsFromHome = servers.reduce((acc, {
+        server,
+        path
+    }) => {
+        acc[server.hostname] = {
+            path,
+            server
+        }
+        return acc
+    }, {})
 
-    servers = servers.reduce((acc, server) => {
-        server = ns.getServer(server)
-
+    servers = servers.reduce((acc, {
+        server,
+    }) => {
         if (ignoreHackingRequirement || (ns.getHackingLevel() >= server.requiredHackingSkill)) {
             acc.push(server)
         }
         return acc
     }, [])
 
-
-    let serversWithCash = servers.filter((server) => !server.hostname.includes("pserv-") && server.moneyMax > 0 && server.hostname != "darkweb")
-
-    // let serversWithCash = servers.filter(({ moneyAvailable, hostname }) => moneyAvailable > 0 && !hostname.includes("pserv-"))
-
     return {
+        connectPathsFromHome,
         servers,
-        serversWithCash
+        serversWithCash: servers.filter(({
+            hostname,
+            moneyMax
+        }) => !hostname.includes("pserv-") && moneyMax > 0 && hostname != "darkweb")
     }
 }
 
@@ -36,18 +59,6 @@ export async function log(ns, filename, content) {
     await ns.write(filename, content + '\n')
 }
 
-/** @param {import("NetscriptDefinitions").NS } ns */
-export async function getEquipment(ns) {
-    return ns.gang.getEquipmentNames().reduce((acc, item) => {
-        let type = ns.gang.getEquipmentType(item)
-        acc[type] = [{
-            name: item,
-            cost: ns.gang.getEquipmentCost(item),
-            stats: ns.gang.getEquipmentStats(item)
-        }].concat(acc[type] || []).sort((a, b) => a.cost - b.cost)
-        return acc
-    }, {})
-}
 
 export function sliceIntoChunks(arr, chunkSize) {
     const res = [];

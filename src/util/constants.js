@@ -268,6 +268,10 @@ export default {
             },
         }
     },
+    brain: {
+        saveForCorporation: 100000000, // 100 m p/s
+        ticksPerSecond: 5 // 100 m p/s
+    },
     scripts: {
         corporation: [
             "/corp/assign.js",

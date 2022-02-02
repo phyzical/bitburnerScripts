@@ -5,14 +5,8 @@ export async function main(ns) {
     let crimes = tasks.splice(0, 9)
     let [vigilanteTask, combatTask, hackingTask, charismaTask, warfareTask] = tasks
 
-    let gangInfo = ns.gang.getGangInformation()
-    let purge = false
-
-    if (gangInfo.wantedLevel > 600) {
-        purge = true
-    }
-
-    if (gangInfo.wantedLevel < 50) {
+    let purge = true
+    if (ns.gang.getGangInformation().wantedPenalty > 0.3) {
         purge = false
     }
 
@@ -23,28 +17,35 @@ export async function main(ns) {
             info: ns.gang.getMemberInformation(x)
         }))
     let workingCount = 0
-
+    // TODO: change to focus down to type of gang i.e comabt vs hacking
+    // wasted efforts
     for (let index in members) {
         let member = members[index]
         let info = ns.gang.getMemberInformation(member.name)
         let working = Math.min(...[info.hack_asc_mult, info.cha_asc_mult, info.str_asc_mult]) * 75
         working = working < 500 ? 500 : working
         let prestige = Math.max(...[info.hack_asc_mult, info.cha_asc_mult, info.str_asc_mult]) * 100
+        // acsend if stats are at the next threshold
         if (info.str > prestige && info.hack > prestige && info.cha > prestige) {
             ns.gang.ascendMember(member.name)
         }
+        // train combat
         if ((prestige < working && info.str < prestige) || (prestige > working && info.str < working)) {
             ns.gang.setMemberTask(member.name, combatTask)
+            // train charisma
         } else if ((prestige < working && info.cha < prestige) || (prestige > working && info.cha < working)) {
             ns.gang.setMemberTask(member.name, charismaTask)
+            // train hacking
         } else if ((prestige < working && info.hack < prestige) || (prestige > working && info.hack < working)) {
             ns.gang.setMemberTask(member.name, hackingTask)
         } else {
             workingCount++
-            let warefare = Math.random() * 100 < 50
+            let warfare = Math.random() * 100 < 50
 
-            if (warefare && gangInfo.territoryWarfareEngaged && gangInfo.territory < 90) {
+            // do some gang warefare
+            if (warfare && ns.gang.getGangInformation().territoryWarfareEngaged && ns.gang.getGangInformation().territory < 90) {
                 ns.gang.setMemberTask(member.name, warfareTask)
+                // we have too much wanted level lets ditch it
             } else if (purge) {
                 ns.gang.setMemberTask(member.name, vigilanteTask)
             } else {

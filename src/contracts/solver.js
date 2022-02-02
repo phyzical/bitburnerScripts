@@ -223,7 +223,7 @@ function doNextPyramidJump(array) {
 
 /** @param {import("NetscriptDefinitions").NS } ns */
 async function solveSpiralizeMatrix(ns, contract) {
-    // await ns.write("solve-log.txt", contract.description + "\n")
+    await ns.write("solve-log.txt", contract.description + "\n")
     let grid = contract.data
     let i = 0
     let max = Math.floor((grid[0].length) / 2)
@@ -257,9 +257,12 @@ async function solveSpiralizeMatrix(ns, contract) {
     }
 
     answer = answer.replace(",", "")
+    while (answer.lastIndexOf(",") == (answer.length - 1)) {
+        answer = answer.substring(0, answer.length - 1)
+    }
     answer = answer.split(',')
 
-    // await ns.write("solve-log.txt", answer + "\n")
+    await ns.write("solve-log.txt", answer + "\n")
     await solve(ns, answer, contract)
 }
 

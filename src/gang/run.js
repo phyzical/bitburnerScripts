@@ -28,7 +28,8 @@ export async function main(ns) {
 
 /** @param {import("NetscriptDefinitions").NS } ns */
 export async function recruitMembers(ns, ) {
-    while (ns.gang.recruitMember(getRandomString())) {
+    while (ns.gang.canRecruitMember()) {
+        ns.gang.recruitMember(getRandomString())
         await ns.sleep(10)
     }
 }

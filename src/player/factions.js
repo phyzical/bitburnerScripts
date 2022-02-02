@@ -19,7 +19,7 @@ export async function main(ns) {
             // means there are some that need rep
             if (unlockableUpgrades.length != unlockableWithRepUpgrades.length) {
                 //ns.share()
-                ns.workForFaction(faction, constants.factions[faction])
+                ns.workForFaction(faction, constants.factions[faction], false)
                 ns.exit()
             }
         })

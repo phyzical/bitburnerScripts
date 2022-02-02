@@ -4,7 +4,7 @@ import constants from "util/constants"
 export async function main(ns) {
     for (var program of Object.keys(constants.player.programsByLevel)) {
         if (!ns.fileExists(`${program}.exe`) && ns.getPlayer().hacking > constants.player.programsByLevel[program]) {
-            ns.createProgram(`${program}.exe`)
+            ns.createProgram(`${program}.exe`, false)
             ns.exit()
         }
     }

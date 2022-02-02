@@ -12,7 +12,7 @@ const STOCK_THRESHOLD = 1 / 100
 export async function main(ns) {
     let i = 0
     while (1) {
-        if (ns.corporation.getCorporation() || ns.getPlayer().money >= 150000000000) {
+        if (ns.getPlayer().hasCorporation || ns.getPlayer().money >= 150000000000) {
             await manager(ns)
             if (i % 30 == 0)
                 await assign(ns)
@@ -25,7 +25,7 @@ export async function main(ns) {
 
 /** @param {import("NetscriptDefinitions").NS } ns */
 async function manager(ns) {
-    ns.corporation.getCorporation() || ns.corporation.createCorporation("Corporation", ns.getPlayer().bitNodeN != 3)
+    ns.getPlayer().hasCorporation || ns.corporation.createCorporation("Corporation", ns.getPlayer().bitNodeN != 3)
     await log(ns, LOG_FILE, "purchasing divisions")
     await purchaseDivisions(ns)
     await log(ns, LOG_FILE, "purchasing company upgrades")

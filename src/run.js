@@ -10,4 +10,5 @@ export async function main(ns) {
 
     await ns.sleep(1000 * 5)
     ns.exec("worm/home.js", "home");
+    ns.exec("brain/run.js", "home")
 }

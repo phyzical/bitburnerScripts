@@ -17,6 +17,7 @@ export async function main(ns) {
                     }
                 })
             // means there are some that need rep
+            // TODO: only do this if we have the cash for upgrades too? otherweise theres better things to be doing
             if (unlockableUpgrades.length != unlockableWithRepUpgrades.length) {
                 //ns.share()
                 ns.workForFaction(faction, constants.factions[faction], false)

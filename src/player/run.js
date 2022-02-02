@@ -5,9 +5,14 @@ export async function main(ns) {
     while (1) {
         ns.stopAction()
         let working = false
-        for (let script of constants.scripts.player) {
+        const scripts = constants.scripts.player
+        if (ns.gang.inGang()) {
+            scripts.push(scripts.splice(2, 1)[0])
+        }
+
+        for (let script of scripts) {
             if (!working) {
-                ns.exec(script, "home");
+                ns.exec(script, "home", 1);
                 while (ns.scriptRunning(script, "home")) {
                     await ns.sleep(1000 * 1)
                 }

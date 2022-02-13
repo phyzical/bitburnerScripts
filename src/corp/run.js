@@ -1,8 +1,4 @@
 import constants from "util/constants"
-import {
-    log,
-} from "util/helpers"
-const LOG_FILE = 'corporation-log.txt'
 
 const UPGRADE_THRESHOLD = 5 / 100
 const PRODUCT_THRESHOLD = 10 / 100
@@ -11,6 +7,8 @@ const STOCK_THRESHOLD = 1 / 100
 /** @param {import("NetscriptDefinitions").NS } ns */
 export async function main(ns) {
     let i = 0
+    // todo we need to tweak this shiz
+    // we need ot do investing until we can afford both apis imo maybe every industry too?
     while (1) {
         if (ns.getPlayer().hasCorporation || ns.getPlayer().money >= 150000000000) {
             await manager(ns)
@@ -26,26 +24,29 @@ export async function main(ns) {
 /** @param {import("NetscriptDefinitions").NS } ns */
 async function manager(ns) {
     ns.getPlayer().hasCorporation || ns.corporation.createCorporation("Corporation", ns.getPlayer().bitNodeN != 3)
-    await log(ns, LOG_FILE, "purchasing divisions")
+    ns.print("purchasing divisions")
     await purchaseDivisions(ns)
-    await log(ns, LOG_FILE, "purchasing company upgrades")
+    ns.print("purchasing company upgrades")
     await purchaseCompanyUpgrades(ns)
 
+    const hasOfficeAPI = ns.corporation.hasUnlockUpgrade("Office API")
+    const hasWarehouseAPI = ns.corporation.hasUnlockUpgrade("Warehouse API")
+    const hasBothAPI = hasOfficeAPI && hasWarehouseAPI
     for (let division of ns.corporation.getCorporation().divisions) {
-        await log(ns, LOG_FILE, `division: ${division.name} ##################`)
-        await log(ns, LOG_FILE, "purchasing division upgrades")
-        await purchaseDivisionUpgrades(ns, division.name)
-        await log(ns, LOG_FILE, "adding and removing products")
-        await addRemoveProducts(ns, division.name)
+        ns.print(`division: ${division.name} ##################`)
+        ns.print("purchasing division upgrades")
+        hasOfficeAPI && await purchaseDivisionUpgrades(ns, division.name)
+        ns.print("adding and removing products")
+        hasBothAPI && await addRemoveProducts(ns, division.name)
         const cities = division.cities
         for (let city of cities) {
-            await log(ns, LOG_FILE, `city: ${city} !!!!!!!!!!!!!!!!!!`)
-            await log(ns, LOG_FILE, "purchasing warehouses")
-            await purchaseWarehouses(ns, division.name, city)
-            await buyBoostMaterials(ns, division.name, city)
+            ns.print(`city: ${city} !!!!!!!!!!!!!!!!!!`)
+            ns.print("purchasing warehouses")
+            hasWarehouseAPI && await purchaseWarehouses(ns, division.name, city)
+            hasWarehouseAPI && await buyBoostMaterials(ns, division.name, city)
         }
-        await log(ns, LOG_FILE, "setting prices")
-        await setSellPrices(ns, division.name, cities[0])
+        ns.print("setting prices")
+        hasBothAPI && await setSellPrices(ns, division.name, cities[0])
     }
     await handleStocks(ns)
 }
@@ -157,7 +158,7 @@ async function purchaseWarehouses(ns, divisionName, city) {
     // warehouse upgrades
     if (!ns.corporation.hasWarehouse(divisionName, city))
         ns.corporation.purchaseWarehouse(divisionName, city)
-    await log(ns, LOG_FILE, ns.corporation.hasWarehouse(divisionName, city))
+    ns.print(ns.corporation.hasWarehouse(divisionName, city))
     while (ns.corporation.getUpgradeWarehouseCost(divisionName, city) < (UPGRADE_THRESHOLD * ns.corporation.getCorporation().funds)) {
         ns.corporation.upgradeWarehouse(divisionName, city)
         await ns.sleep(1)
@@ -169,15 +170,15 @@ async function purchaseDivisions(ns) {
     // buy divisions
     constants.corporation.division.types
         .filter(x => !ns.corporation.getCorporation().divisions.find(y => y.name == x))
-        .map(division => {
-            if (ns.corporation.getExpandIndustryCost(division) < ns.corporation.getCorporation().funds) {
-                return ns.corporation.expandIndustry(division, division)
-            }
-        })
-    // buy constants.cities
+        .map(division => ns.corporation.getExpandIndustryCost(division) < ns.corporation.getCorporation().funds &&
+            ns.corporation.expandIndustry(division, division)
+        )
+    // buy cities
     ns.corporation.getCorporation().divisions.map(division => constants.cities
-        .filter(city => !division.constants.cities.includes(city))
-        .map(city => ns.corporation.expandCity(division.name, city))
+        .filter(city => !division.cities.includes(city))
+        .map(city => ns.corporation.getCorporation().funds > ns.corporation.getExpandCityCost() &&
+            ns.corporation.expandCity(division.name, city)
+        )
     )
 }
 
@@ -202,7 +203,9 @@ async function purchaseCompanyUpgrades(ns) {
 /** @param {import("NetscriptDefinitions").NS } ns */
 async function purchaseDivisionUpgrades(ns, divisionName) {
     //advert
-    while (ns.corporation.getHireAdVertCost(divisionName) < (UPGRADE_THRESHOLD * ns.corporation.getCorporation().funds)) {
+    while (
+        ns.corporation.getHireAdVertCost(divisionName) < (UPGRADE_THRESHOLD * ns.corporation.getCorporation().funds)
+    ) {
         ns.corporation.hireAdVert(divisionName)
         await ns.sleep(1)
     }
@@ -253,6 +256,7 @@ async function addRemoveProducts(ns, divisionName) {
     }
 }
 
+/** @param {import("NetscriptDefinitions").NS } ns */
 async function getPurchasableDivisionUpgrades(ns, divisionName) {
     const hasProducts = ns.corporation.getDivision(divisionName).products.length
 
@@ -272,11 +276,11 @@ async function getPurchasableDivisionUpgrades(ns, divisionName) {
 /** @param {import("NetscriptDefinitions").NS } ns */
 async function assign(ns) {
     for (let division of ns.corporation.getCorporation().divisions) {
-        await log(ns, LOG_FILE, `division: ${division.name} ##################`)
+        ns.print(`division: ${division.name} ##################`)
         for (let city of division.cities) {
-            await log(ns, LOG_FILE, `${city} !!!!!`)
-            await log(ns, LOG_FILE, "handling offices")
-            await handleOffice(ns, division.name, city)
+            ns.print(`${city} !!!!!`)
+            ns.print("handling offices")
+            ns.corporation.hasUnlockUpgrade("Office API") && await handleOffice(ns, division.name, city)
         }
     }
 }
@@ -348,7 +352,7 @@ async function assignEmployees(ns, divisionName, city, hireResearchers) {
                     .filter(x => x.pos == "Unassigned").length
                 total = 0
             }
-            await log(ns, LOG_FILE, `setting autojob ${jobs[i]} ${amountPerJob}`)
+            ns.print(`setting autojob ${jobs[i]} ${amountPerJob}`)
             await ns.corporation.setAutoJobAssignment(divisionName, city, jobs[i], amountPerJob)
             total -= amountPerJob
             i++
